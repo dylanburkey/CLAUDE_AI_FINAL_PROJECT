@@ -13,6 +13,9 @@ import type { McpStdioServerConfig } from '@anthropic-ai/claude-agent-sdk';
  * - ESLint MCP: https://eslint.org/docs/latest/use/mcp
  */
 
+/**
+ * stdio launch settings for each MCP server, keyed by server name
+ */
 export const mcpServersConfig = {
   /**
    * GitHub MCP Server
@@ -43,13 +46,16 @@ export const mcpServersConfig = {
 } satisfies Record<string, McpStdioServerConfig>;
 
 /**
- * MCP tool names as exposed to agents (mcp__<server>__<tool>)
+ * GitHub MCP tool names as exposed to agents (mcp__<server>__<tool>)
  */
 export const githubTools = {
   getFileContents: 'mcp__github__get_file_contents',
   searchCode: 'mcp__github__search_code'
 } as const;
 
+/**
+ * ESLint MCP tool names as exposed to agents (mcp__<server>__<tool>)
+ */
 export const eslintTools = {
   lintFiles: 'mcp__eslint__lint-files'
 } as const;

@@ -1,3 +1,6 @@
+/**
+ * Renders review reports as Markdown, HTML, and JSON
+ */
 import { ReviewReport } from '../types/report-types.js';
 
 /**

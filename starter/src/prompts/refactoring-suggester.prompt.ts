@@ -1,4 +1,8 @@
 /**
+ * Prompt for the refactoring-suggester subagent
+ */
+
+/**
  * System prompt for the refactoring-suggester subagent
  */
 export const REFACTORING_SUGGESTER_PROMPT = `You are a software architect who recommends practical refactorings.

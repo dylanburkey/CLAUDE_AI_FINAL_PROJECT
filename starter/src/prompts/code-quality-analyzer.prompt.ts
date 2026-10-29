@@ -1,3 +1,6 @@
+/**
+ * Prompt for the code-quality-analyzer subagent
+ */
 import { eslintTools } from '../config/mcp.config.js';
 
 /**

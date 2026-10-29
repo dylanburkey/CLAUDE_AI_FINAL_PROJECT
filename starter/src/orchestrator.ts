@@ -1,3 +1,8 @@
+/**
+ * Code review orchestrator
+ * Fetches PR files, runs one agent session per file that fans out to the three subagents,
+ * validates their structured output, and aggregates everything into a ReviewReport
+ */
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { query } from '@anthropic-ai/claude-agent-sdk';
@@ -22,6 +27,7 @@ import {
   logAgentComplete
 } from './utils/logger.js';
 
+/** Orchestrator version recorded in report metadata */
 export const ORCHESTRATOR_VERSION = '1.0.0';
 
 /**
@@ -59,6 +65,7 @@ export interface OrchestratorOptions {
   queryFn?: QueryFn;
 }
 
+/** Options after defaults are applied; injectables are stored separately */
 type ResolvedOptions = Required<Omit<OrchestratorOptions, 'rateLimits' | 'source' | 'queryFn'>>;
 
 /**
@@ -75,10 +82,14 @@ const DISALLOWED_TOOLS = ['Bash', 'Write', 'Edit', 'NotebookEdit', 'WebFetch', '
 
 /** Rough upper bound for one file: orchestrator plus three subagents, each reading the file */
 const BASE_TOKENS_PER_AGENT = 3000;
+/** Agent sessions per reviewed file: the orchestrator plus three subagents */
 const AGENTS_PER_FILE = 4;
 
+/** Sort rank for recommendation priorities, most urgent first */
 const PRIORITY_ORDER = { critical: 0, high: 1, medium: 2, low: 3 } as const;
+/** Recommendation priority level */
 type Priority = keyof typeof PRIORITY_ORDER;
+/** A single entry in the report's recommendations list */
 type Recommendation = ReviewReport['recommendations'][number];
 
 /**
@@ -91,6 +102,9 @@ export class CodeReviewOrchestrator {
   private readonly source: PullRequestSource;
   private readonly queryFn: QueryFn;
 
+  /**
+   * Apply option defaults from arguments, then environment variables, then built-in values
+   */
   constructor(options: OrchestratorOptions = {}) {
     this.options = {
       model: options.model ?? process.env.ANTHROPIC_MODEL ?? 'sonnet',
@@ -354,6 +368,10 @@ export class CodeReviewOrchestrator {
     }
   }
 
+  /**
+   * Pick reviewable source files, largest changes first, capped at maxFiles
+   * Removed files and non-source extensions are skipped
+   */
   private selectFiles(files: PullRequestFile[]): PullRequestFile[] {
     const reviewable = files.filter(f =>
       f.status !== 'removed' && REVIEWABLE_EXTENSIONS.has(path.extname(f.filename).toLowerCase())
@@ -499,6 +517,9 @@ export function buildReport(input: {
   });
 }
 
+/**
+ * Group items into a map keyed by the result of `key`, preserving input order
+ */
 function groupBy<T>(items: T[], key: (item: T) => string): Map<string, T[]> {
   const groups = new Map<string, T[]>();
   for (const item of items) {
@@ -508,6 +529,9 @@ function groupBy<T>(items: T[], key: (item: T) => string): Map<string, T[]> {
   return groups;
 }
 
+/**
+ * Remove duplicate strings, keeping first occurrences in order
+ */
 function unique(values: string[]): string[] {
   return [...new Set(values)];
 }

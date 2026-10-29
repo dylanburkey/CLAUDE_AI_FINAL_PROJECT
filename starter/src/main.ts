@@ -1,3 +1,8 @@
+/**
+ * CLI entry point
+ * Validates arguments and environment, runs a review, and writes Markdown/HTML/JSON reports
+ */
+
 // Load environment variables before any module reads process.env at import time
 import 'dotenv/config';
 import { existsSync } from 'node:fs';
@@ -8,8 +13,12 @@ import { ReportGenerator } from './utils/report-generator.js';
 import { formatError } from './utils/error-handler.js';
 import { logger } from './utils/logger.js';
 
+/** Usage line shown alongside argument errors */
 const USAGE = 'Usage: npm run dev -- <owner> <repo> <pr-number>';
 
+/**
+ * Print an error and exit with status 1
+ */
 function fail(message: string): never {
   console.error(`❌ ${message}`);
   process.exit(1);

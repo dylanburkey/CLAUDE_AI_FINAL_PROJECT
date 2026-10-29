@@ -6,7 +6,9 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
  * Uses Zod for runtime validation and converts to JSON Schema for SDK
  */
 
-// Code Quality Analyzer output schema
+/**
+ * Code Quality Analyzer output: severity-leveled issues and a 0-100 score
+ */
 export const CodeQualityResultSchema = z.object({
   file: z.string(),
   issues: z.array(z.object({
@@ -27,7 +29,9 @@ export const CodeQualityResultSchema = z.object({
   summary: z.string()
 });
 
-// Test Coverage Analyzer output schema
+/**
+ * Test Coverage Analyzer output: tests found, prioritized untested paths, and a coverage estimate
+ */
 export const TestCoverageResultSchema = z.object({
   file: z.string(),
   hasTests: z.boolean(),
@@ -43,7 +47,9 @@ export const TestCoverageResultSchema = z.object({
   summary: z.string()
 });
 
-// Refactoring Suggester output schema
+/**
+ * Refactoring Suggester output: suggestions with before/after code and impact
+ */
 export const RefactoringSuggestionSchema = z.object({
   file: z.string(),
   suggestions: z.array(z.object({
@@ -64,12 +70,19 @@ export const RefactoringSuggestionSchema = z.object({
   summary: z.string()
 });
 
-// TypeScript type exports
+/** Validated code-quality-analyzer result */
 export type CodeQualityResult = z.infer<typeof CodeQualityResultSchema>;
+/** Validated test-coverage-analyzer result */
 export type TestCoverageResult = z.infer<typeof TestCoverageResultSchema>;
+/** Validated refactoring-suggester result */
 export type RefactoringSuggestion = z.infer<typeof RefactoringSuggestionSchema>;
 
+/** Plain JSON Schema object */
 type JsonSchema = Record<string, unknown>;
+
+/**
+ * Convert a Zod schema to JSON Schema with all $refs inlined at the root
+ */
 const toJsonSchema = (schema: z.ZodTypeAny): JsonSchema =>
   (zodToJsonSchema as (s: unknown, options?: unknown) => unknown)(
     schema,
@@ -82,5 +95,7 @@ const toJsonSchema = (schema: z.ZodTypeAny): JsonSchema =>
  * Use $refStrategy: 'root' to properly inline all $ref definitions
  */
 export const CodeQualityResultJSONSchema: JsonSchema = toJsonSchema(CodeQualityResultSchema);
+/** JSON Schema for TestCoverageResultSchema */
 export const TestCoverageResultJSONSchema: JsonSchema = toJsonSchema(TestCoverageResultSchema);
+/** JSON Schema for RefactoringSuggestionSchema */
 export const RefactoringSuggestionJSONSchema: JsonSchema = toJsonSchema(RefactoringSuggestionSchema);

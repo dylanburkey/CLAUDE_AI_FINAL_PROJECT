@@ -1,3 +1,6 @@
+/**
+ * Tests for the retry, timeout, error formatting, and rate limiting utilities
+ */
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { RateLimiter, withRateLimit } from '../src/utils/rate-limiter.js';
 import { ReviewError, ErrorCodes, withRetry, withTimeout, formatError } from '../src/utils/error-handler.js';

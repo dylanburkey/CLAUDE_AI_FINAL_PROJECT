@@ -10,6 +10,9 @@
  * - Uses token estimation to prevent exceeding token-per-minute limits
  */
 
+/**
+ * Rate limiter settings
+ */
 export interface RateLimiterConfig {
   /** Maximum requests per minute */
   maxRequestsPerMinute: number;
@@ -19,12 +22,18 @@ export interface RateLimiterConfig {
   maxConcurrent: number;
 }
 
+/**
+ * Limits used for any setting not overridden in the constructor
+ */
 export const DEFAULT_RATE_LIMITS: RateLimiterConfig = {
   maxRequestsPerMinute: 50,      // Conservative default
   maxTokensPerMinute: 100000,    // ~100k tokens/min
   maxConcurrent: 5               // Max parallel requests
 };
 
+/**
+ * One request in the sliding window: when it started and its token estimate
+ */
 interface RequestRecord {
   timestamp: number;
   tokens: number;
@@ -39,6 +48,9 @@ export class RateLimiter {
   private activeRequests: number = 0;
   private waitQueue: Array<() => void> = [];
 
+  /**
+   * Merge the given overrides onto DEFAULT_RATE_LIMITS
+   */
   constructor(config: Partial<RateLimiterConfig> = {}) {
     this.config = { ...DEFAULT_RATE_LIMITS, ...config };
   }
@@ -212,5 +224,7 @@ export function withRateLimit<T>(
   });
 }
 
-// Global rate limiter instance
+/**
+ * Shared rate limiter instance with default limits
+ */
 export const globalRateLimiter = new RateLimiter();

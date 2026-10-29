@@ -1,4 +1,8 @@
 /**
+ * Prompt builder for the per-file orchestrator agent session
+ */
+
+/**
  * Context for reviewing one file of a pull request
  */
 export interface FileReviewContext {
@@ -20,6 +24,7 @@ export interface FileReviewContext {
   changedFiles: string[];
 }
 
+/** Diffs longer than this are truncated to keep the prompt within budget */
 const MAX_PATCH_CHARS = 20000;
 
 /**

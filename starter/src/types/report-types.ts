@@ -1,3 +1,6 @@
+/**
+ * Schemas and types for the final review report
+ */
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import {
@@ -51,9 +54,15 @@ export const ReviewReportSchema = z.object({
  * TypeScript type inferred from Zod schema
  */
 export type ReviewReport = z.infer<typeof ReviewReportSchema>;
+/** Validated per-file review */
 export type FileReview = z.infer<typeof FileReviewSchema>;
 
+/** Plain JSON Schema object */
 type JsonSchema = Record<string, unknown>;
+
+/**
+ * Convert a Zod schema to JSON Schema with all $refs inlined at the root
+ */
 const toJsonSchema = (schema: z.ZodTypeAny): JsonSchema =>
   (zodToJsonSchema as (s: unknown, options?: unknown) => unknown)(
     schema,
@@ -68,8 +77,10 @@ const toJsonSchema = (schema: z.ZodTypeAny): JsonSchema =>
 const rawSchema: JsonSchema = toJsonSchema(ReviewReportSchema);
 
 // Extract the actual schema - zodToJsonSchema may wrap it with extra properties
+/** JSON Schema for the complete review report */
 export const ReviewReportJSONSchema = rawSchema;
 
 // Strip the $schema key, which the structured output API doesn't need
 const { $schema: _fileReviewSchemaUri, ...fileReviewJSONSchema } = toJsonSchema(FileReviewSchema);
+/** JSON Schema the orchestrator agent must satisfy for each file's structured output */
 export const FileReviewJSONSchema: JsonSchema = fileReviewJSONSchema;

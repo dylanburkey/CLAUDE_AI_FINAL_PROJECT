@@ -28,8 +28,12 @@ import { DEFAULT_RATE_LIMITS } from '../src/utils/rate-limiter.js';
  * The GitHub MCP source and the Agent SDK query function are replaced with fakes
  */
 
+/** Subagents the fake query reports launching via the Task tool */
 const SUBAGENT_NAMES = ['code-quality-analyzer', 'test-coverage-analyzer', 'refactoring-suggester'];
 
+/**
+ * Fixture PR with two reviewable files, one non-source file, and one removed file
+ */
 const PR_FILES: PullRequestFile[] = [
   { filename: 'src/payment.ts', status: 'modified', additions: 40, deletions: 5, patch: '@@ -1 +1 @@\n+const x = 1;' },
   { filename: 'src/utils.js', status: 'added', additions: 10, deletions: 0, patch: '@@ +1 @@\n+var y = 2;' },
@@ -37,6 +41,9 @@ const PR_FILES: PullRequestFile[] = [
   { filename: 'src/old.ts', status: 'removed', additions: 0, deletions: 30 }
 ];
 
+/**
+ * Build a valid FileReview with one critical issue, one high-priority test gap, and one refactoring
+ */
 function makeFileReview(file: string, overrides: Partial<{ score: number }> = {}): FileReview {
   return {
     file,
@@ -69,7 +76,10 @@ function makeFileReview(file: string, overrides: Partial<{ score: number }> = {}
   };
 }
 
-function makeSource(): PullRequestSource & { [K in keyof PullRequestSource]: ReturnType<typeof vi.fn> } {
+/**
+ * Fake PullRequestSource backed by PR_FILES, with every method a vi.fn spy
+ */
+function makeSource():PullRequestSource & { [K in keyof PullRequestSource]: ReturnType<typeof vi.fn> } {
   return {
     getPullRequest: vi.fn(async () => ({ title: 'Add payments', headSha: 'abc123', headOwner: 'acme', headRepo: 'shop' })),
     getPullRequestFiles: vi.fn(async () => PR_FILES),

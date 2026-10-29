@@ -1,3 +1,6 @@
+/**
+ * Prompt for the test-coverage-analyzer subagent
+ */
 import { githubTools } from '../config/mcp.config.js';
 
 /**

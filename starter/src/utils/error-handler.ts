@@ -1,4 +1,8 @@
 /**
+ * Error types, retry with backoff, timeouts, and error formatting
+ */
+
+/**
  * Custom error class for review operations
  */
 export class ReviewError extends Error {
@@ -39,6 +43,7 @@ export const ErrorCodes = {
   UNKNOWN_ERROR: 'UNKNOWN_ERROR'
 } as const;
 
+/** Union of all ErrorCodes values */
 export type ErrorCode = typeof ErrorCodes[keyof typeof ErrorCodes];
 
 /**

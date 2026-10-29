@@ -29,6 +29,9 @@ export const subagents: Record<string, AgentDefinition> = {
   [REFACTORING_SUGGESTER_NAME]: refactoringSuggester
 };
 
+/**
+ * Subagent versions keyed by name, recorded in report metadata
+ */
 export const agentVersions: Record<string, string> = {
   [CODE_QUALITY_ANALYZER_NAME]: CODE_QUALITY_ANALYZER_VERSION,
   [TEST_COVERAGE_ANALYZER_NAME]: TEST_COVERAGE_ANALYZER_VERSION,

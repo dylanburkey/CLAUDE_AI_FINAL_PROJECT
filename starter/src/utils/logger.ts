@@ -1,3 +1,6 @@
+/**
+ * Winston logger and structured logging helpers
+ */
 import winston from 'winston';
 
 /**
@@ -43,10 +46,17 @@ if (process.env.NODE_ENV !== 'production') {
 /**
  * Log helper functions for common operations
  */
+
+/**
+ * Log the start of a PR review
+ */
 export const logReviewStart = (owner: string, repo: string, prNumber: number) => {
   logger.info('Starting code review', { owner, repo, prNumber });
 };
 
+/**
+ * Log a successful review with its overall score and duration (ms)
+ */
 export const logReviewComplete = (
   owner: string,
   repo: string,
@@ -64,6 +74,9 @@ export const logReviewComplete = (
   });
 };
 
+/**
+ * Log a failed review with the error message and stack
+ */
 export const logReviewError = (
   owner: string,
   repo: string,
@@ -80,10 +93,16 @@ export const logReviewError = (
   });
 };
 
+/**
+ * Log (debug) that a subagent started on a file
+ */
 export const logAgentStart = (agentName: string, file: string) => {
   logger.debug('Subagent starting', { agent: agentName, file });
 };
 
+/**
+ * Log (debug) that a subagent finished a file, with its duration (ms)
+ */
 export const logAgentComplete = (agentName: string, file: string, duration: number) => {
   logger.debug('Subagent completed', { agent: agentName, file, duration });
 };

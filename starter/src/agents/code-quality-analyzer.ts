@@ -1,8 +1,13 @@
+/**
+ * code-quality-analyzer subagent definition
+ */
 import type { AgentDefinition } from '@anthropic-ai/claude-agent-sdk';
 import { CODE_QUALITY_ANALYZER_PROMPT } from '../prompts/index.js';
 import { eslintTools } from '../config/mcp.config.js';
 
+/** Subagent name the orchestrator passes to the Task tool */
 export const CODE_QUALITY_ANALYZER_NAME = 'code-quality-analyzer';
+/** Subagent version recorded in report metadata */
 export const CODE_QUALITY_ANALYZER_VERSION = '1.0.0';
 
 /**

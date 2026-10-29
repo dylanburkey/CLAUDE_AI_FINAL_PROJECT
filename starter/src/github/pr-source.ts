@@ -1,3 +1,7 @@
+/**
+ * Pull request data access
+ * Defines the PullRequestSource interface and its GitHub MCP implementation
+ */
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { mcpServersConfig } from '../config/mcp.config.js';
@@ -42,6 +46,9 @@ export interface PullRequestSource {
 export class GitHubMcpSource implements PullRequestSource {
   private client: Client | null = null;
 
+  /**
+   * Launch the GitHub MCP server on first use and reuse the connected client afterwards
+   */
   private async connect(): Promise<Client> {
     if (this.client) return this.client;
 
@@ -60,6 +67,10 @@ export class GitHubMcpSource implements PullRequestSource {
     return client;
   }
 
+  /**
+   * Call a GitHub MCP tool and parse its JSON text result
+   * Tool errors are mapped to ReviewError codes (PR_NOT_FOUND, RATE_LIMITED, GITHUB_API_ERROR)
+   */
   private async callTool(name: string, args: Record<string, unknown>): Promise<unknown> {
     const client = await this.connect();
     const result = await client.callTool({ name, arguments: args });
@@ -81,6 +92,9 @@ export class GitHubMcpSource implements PullRequestSource {
     }
   }
 
+  /**
+   * Fetch the PR title and the repository/commit that hold its head
+   */
   async getPullRequest(owner: string, repo: string, prNumber: number): Promise<PullRequestInfo> {
     const pr = await this.callTool('get_pull_request', { owner, repo, pull_number: prNumber }) as {
       title: string;
@@ -96,10 +110,17 @@ export class GitHubMcpSource implements PullRequestSource {
     };
   }
 
+  /**
+   * List the files changed in the PR, with diff stats and patches
+   */
   async getPullRequestFiles(owner: string, repo: string, prNumber: number): Promise<PullRequestFile[]> {
     return await this.callTool('get_pull_request_files', { owner, repo, pull_number: prNumber }) as PullRequestFile[];
   }
 
+  /**
+   * Fetch a file's text at the given ref
+   * Throws FILE_NOT_FOUND when the path has no content (e.g. a directory)
+   */
   async getFileContent(owner: string, repo: string, path: string, ref: string): Promise<string> {
     const file = await this.callTool('get_file_contents', { owner, repo, path, branch: ref }) as {
       content?: string;
@@ -117,6 +138,9 @@ export class GitHubMcpSource implements PullRequestSource {
       : file.content;
   }
 
+  /**
+   * Shut down the MCP server connection, if one was opened
+   */
   async close(): Promise<void> {
     await this.client?.close();
     this.client = null;

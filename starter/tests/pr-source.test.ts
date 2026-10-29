@@ -1,3 +1,6 @@
+/**
+ * Tests for GitHubMcpSource content decoding
+ */
 import { describe, it, expect, vi } from 'vitest';
 import { GitHubMcpSource } from '../src/github/pr-source.js';
 
