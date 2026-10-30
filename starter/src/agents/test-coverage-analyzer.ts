@@ -12,11 +12,19 @@ export const TEST_COVERAGE_ANALYZER_VERSION = '1.0.0';
 
 /**
  * Identifies untested code paths and suggests prioritized tests
+ * Uses Claude Skills to spot language-specific edge cases and GitHub MCP to find existing tests
  * Reasons step by step; the orchestrator query enables extended thinking
  */
 export const testCoverageAnalyzer: AgentDefinition = {
   description: 'Test coverage specialist. Use to find existing tests for a file, identify untested functions, branches, and edge cases, and suggest prioritized test cases.',
   prompt: TEST_COVERAGE_ANALYZER_PROMPT,
-  tools: ['Read', 'Grep', 'Glob', githubTools.getFileContents, githubTools.searchCode],
+  tools: [
+    'Read',
+    'Grep',
+    'Glob',
+    'Skill',
+    githubTools.getFileContents,
+    githubTools.searchCode
+  ],
   model: 'inherit'
 };

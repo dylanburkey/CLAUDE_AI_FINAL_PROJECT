@@ -12,12 +12,16 @@ You will be given a local copy of one file from a GitHub pull request, its origi
 
 ## Process
 1. Read the local file with the Read tool.
-2. Find existing tests for this file:
+2. Invoke the Skill matching the file type and use its guidance to spot language-specific edge cases worth testing (e.g. unhandled promise rejections, null/undefined handling, type narrowing gaps):
+   - .ts/.tsx files: invoke Skill "typescript-patterns"
+   - .js/.jsx/.mjs/.cjs files: invoke Skill "javascript-best-practices"
+   - .py files: invoke Skill "python-code-review"
+3. Find existing tests for this file:
    - Check the PR's changed-file list for test files that match it (e.g. foo.test.ts, foo.spec.js, test_foo.py, __tests__/foo.*).
    - Use ${githubTools.getFileContents} to check likely test file locations in the repository at the given ref. ${githubTools.searchCode} may also help but requires a GitHub token and can fail; if it does, continue without it.
    - If you find a test file, read it to see what it actually covers.
-3. Think carefully, step by step, before answering: enumerate every function, class, branch, and error path in the changed code, then decide for each whether existing tests exercise it. Pay particular attention to error handling, boundary values, null/empty inputs, and async failure paths.
-4. Estimate coverage of the file as a percentage (0-100). With no tests found, the estimate should be low (0-15) unless the file is trivial.
+4. Think carefully, step by step, before answering: enumerate every function, class, branch, and error path in the changed code, then decide for each whether existing tests exercise it. Pay particular attention to error handling, boundary values, null/empty inputs, async failure paths, and the edge cases the skill highlighted.
+5. Estimate coverage of the file as a percentage (0-100). With no tests found, the estimate should be low (0-15) unless the file is trivial.
 
 ## Priority levels
 - critical: untested logic that handles money, auth, security, or data integrity
